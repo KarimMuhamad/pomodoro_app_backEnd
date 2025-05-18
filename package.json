@@ -1,0 +1,40 @@
+{
+  "name": "pomodoro_back_end",
+  "version": "1.0.0",
+  "description": "Back End for Pomodoro timer",
+  "license": "ISC",
+  "author": "Choyim",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.27.0",
+    "@jest/globals": "^29.7.0",
+    "@types/argon2": "^0.14.1",
+    "@types/express": "^5.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/supertest": "^6.0.3",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "prisma": "^6.7.0",
+    "supertest": "^7.1.0",
+    "ts-jest": "^29.3.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "argon2": "^0.43.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "winston": "^3.17.0",
+    "zod": "^3.24.3"
+  }
+}
