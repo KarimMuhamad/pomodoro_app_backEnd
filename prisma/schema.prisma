@@ -12,3 +12,76 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum SessionType {
+  FOCUS
+  SHORT_BREAK
+  LONG_BREAK
+}
+
+model User {
+  id              Int               @id @default(autoincrement())
+  username        String            @unique @db.VarChar(50)
+  email           String            @unique @db.VarChar(100)
+  password        String            @db.VarChar(255)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  UserPreferences UserPreferences[]
+  Label           Label[]
+  PomodoroSession PomodoroSession[]
+  RefreshToken    RefreshToken[]
+
+  @@map("user")
+}
+
+model UserPreferences {
+  id                 Int     @id @default(autoincrement())
+  userId             Int     @map("user_id")
+  focusDuration      Int     @default(1500) @map("focus_duration") //25 min in sec
+  shortBreakDuration Int     @default(300) @map("short_break_duration") // 5 min ~
+  longBreakDuration  Int     @default(900) @map("long_break_duration") // 15 min ~
+  autoStartFocus     Boolean @default(false) @map("auto_start_focus")
+  autoStartBreak     Boolean @default(false) @map("auto_start_break")
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+model PomodoroSession {
+  id          Int         @id @default(autoincrement())
+  userId      Int         @map("user_id")
+  labelId     Int         @map("label_id")
+  duration    Int
+  startTime   DateTime    @map("start_time")
+  endTime     DateTime    @map("end_time")
+  hour        Int
+  type        SessionType
+  isCompleted Boolean     @default(false)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       Label       @relation(fields: [labelId], references: [id])
+
+  @@map("pomodoro_session")
+}
+
+model Label {
+  id              Int               @id @default(autoincrement())
+  userId          Int               @map("user_id")
+  name            String            @db.VarChar(20)
+  color           String            @db.VarChar(10)
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  PomodoroSession PomodoroSession[]
+
+  @@map("label")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  token      String   @unique @db.VarChar(255)
+  deviceInfo String   @map("device_info") @db.VarChar(50)
+  expiredAt  DateTime @map("expired_at")
+  revoked    Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_token")
+}
