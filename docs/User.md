@@ -33,7 +33,6 @@
 ```json
 {
   "status": 400,
-  "message": "Validation errors",
   "errors" : "Invalid Format"
 }
 ```
@@ -46,6 +45,7 @@
 
 ```json
 {
+  "email" : "test@dev.com",
   "username": "test",
   "password" : "test123"
 }
@@ -78,7 +78,6 @@
 ```json
 {
   "status": 400,
-  "message": "Validation errors",
   "errors" : "Invalid Format"
 }
 ```
@@ -86,7 +85,6 @@
 ```json
 {
   "status": 401,
-  "message": "Unauthorized",
   "errors" : "Invalid Username or Password"
 }
 ```
@@ -113,7 +111,6 @@
 ```json
 {
   "status": 401,
-  "message": "Unauthorized",
   "errors" : "Refresh Token Invalid"
 }
 ```
@@ -145,7 +142,6 @@
 ```json
 {
   "status": 401,
-  "message": "Unauthorized",
   "errors" : "Acces Token Invalid"
 }
 ```

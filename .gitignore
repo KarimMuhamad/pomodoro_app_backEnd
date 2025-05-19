@@ -26,6 +26,10 @@ coverage/
 *.swo
 .DS_Store
 
+# Logs
+logs/
+*.log
+
 # Debug logs
 npm-debug.log*
 yarn-debug.log*

@@ -57,7 +57,7 @@ model PomodoroSession {
   type        SessionType
   isCompleted Boolean     @default(false)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  label       Label       @relation(fields: [labelId], references: [id])
+  label       Label       @relation(fields: [labelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("pomodoro_session")
 }
