@@ -4,8 +4,6 @@ export type AuthResponse = {
     id: number;
     username: string;
     email: string;
-    token?: string;
-    expires?: number;
 }
 
 export type RegisterAuthRequest = {
@@ -25,7 +23,5 @@ export function toAuthResponse(User: User, token?: string, expires?: number): Au
         id: User.id,
         username: User.username,
         email: User.email,
-        token: token,
-        expires: expires,
     }
 }

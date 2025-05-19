@@ -31,13 +31,15 @@ prisma.$on('info', (e) => {
 });
 
 
-prisma.$on('query', (e) => {
-    logger.debug('Prisma Query', {
-        query: e.query,
-        params: e.params,
-        duration: `${e.duration}ms`,
+if (process.env.NODE_ENV !== 'production') {
+    prisma.$on('query', (e) => {
+        logger.debug('Prisma Query', {
+            query: e.query,
+            params: e.params,
+            duration: `${e.duration}ms`,
+        });
     });
-});
+}
 
 
 export default prisma;

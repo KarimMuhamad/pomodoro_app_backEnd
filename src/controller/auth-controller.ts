@@ -27,12 +27,29 @@ export class AuthController {
     static async login(req: Request, res: Response, next: NextFunction) {
         try {
             const request:LoginAuthRequest = req.body as LoginAuthRequest;
-            const response = await AuthService.login(request);
+            const response = await AuthService.login(request, req.headers['user-agent'] as string);
+
+            res.cookie('accesToken', response.accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: response.accessTokenExpires,
+            });
+
+            res.cookie('refreshToken', response.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                path: '/api/v1/auth/refresh',
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+            })
+
             res.status(200).json({
                 status: 200,
                 message: 'SuccessFully logged in',
-                data: response,
+                data: response.authRes,
             });
+
             logging.info('User logged in', {
                 username: request.username,
                 email: request.email!.replace(/(?<=.).(?=[^@]*@)/g, '*'),

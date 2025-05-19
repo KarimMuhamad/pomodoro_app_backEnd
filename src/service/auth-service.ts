@@ -5,8 +5,7 @@ import prisma from "../application/database";
 import {ResponseError} from "../error/response-error";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import {v4 as uuidv4} from "uuid";
-import {response} from "express";
+import {AuthTypeToken} from "../type/auth-typeToken";
 
 export class AuthService {
 
@@ -59,7 +58,7 @@ export class AuthService {
         return result;
     }
     
-    static async login(req: LoginAuthRequest, deviceInfo?:string) : Promise<AuthResponse> {
+    static async login(req: LoginAuthRequest, deviceInfo?:string) : Promise<AuthTypeToken> {
         const loginRequest = Validation.validate(AuthValidation.LOGIN, req);
 
         const user = await prisma.user.findFirst({
@@ -85,7 +84,7 @@ export class AuthService {
         const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: "1h"});
         const expires = 3600; // 1 hour
 
-        const refreshToken = uuidv4();
+        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH!, {expiresIn: "30d"});
         const refreshTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
         await prisma.refreshToken.create({
             data: {
@@ -96,6 +95,12 @@ export class AuthService {
             }
         });
 
-        return toAuthResponse(user, token, expires);
+        return {
+            authRes: toAuthResponse(user),
+            accessToken: token,
+            accessTokenExpires: expires,
+            refreshToken: refreshToken,
+            refreshTokenExpires: refreshTokenExpires.getTime()
+        };
     }
 }

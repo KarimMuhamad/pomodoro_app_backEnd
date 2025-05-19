@@ -3,7 +3,7 @@ import supertest from "supertest";
 import {web} from "../src/application/web";
 import prisma from "../src/application/database";
 
-describe('POST /api/v1/auth/login', () => {
+describe('POST /api/v1/auth/register', () => {
     afterEach(async () => {
         AuthTest.deleteAll();
     });
@@ -78,8 +78,9 @@ describe('POST /api/v1/auth/login', () => {
         expect(response.status).toBe(200);
         expect(response.body.status).toBe(200);
         expect(response.body.message).toBe('SuccessFully logged in');
-        expect(response.body.data.token).toBeDefined();
-
+        expect(response.headers['set-cookie']).toBeDefined();
+        expect(response.headers['set-cookie'][0]).toBeDefined();
+        expect(response.headers['set-cookie'][1]).toBeDefined();
     });
 
     it('should be able to login with username', async () => {
@@ -101,8 +102,9 @@ describe('POST /api/v1/auth/login', () => {
         expect(response.status).toBe(200);
         expect(response.body.status).toBe(200);
         expect(response.body.message).toBe('SuccessFully logged in');
-        expect(response.body.data.token).toBeDefined();
-
+        expect(response.headers['set-cookie']).toBeDefined();
+        expect(response.headers['set-cookie'][0]).toBeDefined();
+        expect(response.headers['set-cookie'][1]).toBeDefined();
     });
 
     it('should reject if username, email or password wrong', async () => {
@@ -119,4 +121,6 @@ describe('POST /api/v1/auth/login', () => {
         expect(response.body.status).toBe(401);
         expect(response.body.error).toBeDefined();
     });
+    
+    
 });
