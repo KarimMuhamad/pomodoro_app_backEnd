@@ -120,6 +120,7 @@ describe('POST /api/v1/auth/login', () => {
         expect(response.status).toBe(401);
         expect(response.body.status).toBe(401);
         expect(response.body.error).toBeDefined();
+        expect(response.headers['set-cookie']).toBeUndefined();
     });
     
     

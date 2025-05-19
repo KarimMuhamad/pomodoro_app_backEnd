@@ -6,6 +6,7 @@ import {ResponseError} from "../error/response-error";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import {AuthTypeToken} from "../type/auth-typeToken";
+import now = jest.now;
 
 export class AuthService {
 
@@ -79,28 +80,33 @@ export class AuthService {
             throw new ResponseError(401, "Password is wrong");
         }
 
-        const payload = {id: user.id, email: user.email, username: user.username};
+        const accesTpkemExpires = Date.now() + 1500 * 1000;
+        const refreshTokenExpires = Date.now() + 1000 * 60 * 60 * 24 * 30;
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: "1h"});
-        const expires = 3600; // 1 hour
+        const payload = {id: user.id, iat: Date.now()};
 
+        const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: "15m"});
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH!, {expiresIn: "30d"});
-        const refreshTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+
         await prisma.refreshToken.create({
             data: {
                 userId: user.id,
                 token: refreshToken,
                 deviceInfo: deviceInfo || 'Unknown',
-                expiredAt: refreshTokenExpires
+                expiredAt: new Date(refreshTokenExpires)
             }
         });
 
         return {
             authRes: toAuthResponse(user),
             accessToken: token,
-            accessTokenExpires: expires,
+            accessTokenExpires: accesTpkemExpires,
             refreshToken: refreshToken,
-            refreshTokenExpires: refreshTokenExpires.getTime()
+            refreshTokenExpires: refreshTokenExpires
         };
+    }
+
+    static async logout() {
+
     }
 }

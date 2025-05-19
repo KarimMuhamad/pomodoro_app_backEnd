@@ -79,7 +79,6 @@ model RefreshToken {
   token      String   @unique @db.VarChar(255)
   deviceInfo String   @map("device_info") @db.VarChar(50)
   expiredAt  DateTime @map("expired_at")
-  revoked    Boolean  @default(false)
   createdAt  DateTime @default(now()) @map("created_at")
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
