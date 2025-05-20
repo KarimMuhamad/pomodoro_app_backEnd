@@ -2,6 +2,7 @@ import {Request, Response, NextFunction, request, response} from "express";
 import {LoginAuthRequest, RegisterAuthRequest} from "../model/auth-model";
 import {AuthService} from "../service/auth-service";
 import logging from "../application/logging";
+import {AuthUserRequest} from "../type/auth-typeToken";
 
 export class AuthController {
 
@@ -29,35 +30,50 @@ export class AuthController {
             const request:LoginAuthRequest = req.body as LoginAuthRequest;
             const response = await AuthService.login(request, req.headers['user-agent'] as string);
 
-            res.cookie('accesToken', response.accessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-                maxAge: response.accessTokenExpires,
-            });
-
             res.cookie('refreshToken', response.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 path: '/api/v1/auth/refresh',
                 maxAge: 1000 * 60 * 60 * 24 * 30,
-            })
+            });
 
             res.status(200).json({
                 status: 200,
                 message: 'SuccessFully logged in',
                 data: response.authRes,
+                accessToken: response.accessToken,
+                expiresIn: response.accessTokenExpires,
             });
 
             logging.info('User logged in', {
                 username: request.username,
-                email: request.email!.replace(/(?<=.).(?=[^@]*@)/g, '*'),
+                email: request.email?.replace(/(?<=.).(?=[^@]*@)/g, '*'),
             });
 
         } catch (e) {
             next(e);
             logging.warn(`User login failed : ${e.message}`, {request: req.body});
+        }
+    }
+
+    static async logout(req: AuthUserRequest, res: Response, next: NextFunction) {
+        try {
+            const response = await AuthService.logout(req.user!);
+            res.status(200).json({
+                status: 200,
+                message: 'OK',
+                tes: 'test'
+            });
+
+            logging.info('User logged out', {
+                username: req.user!.username,
+            });
+
+            res.clearCookie('refreshToken');
+        } catch (e) {
+            next(e);
+            logging.warn(`User logout failed : ${e.message}`, {request: req.body});
         }
     }
 

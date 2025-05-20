@@ -1,5 +1,8 @@
 import prisma from "../src/application/database";
 import argon2 from "argon2";
+import supertest from "supertest";
+import { web } from "../src/application/web";
+import jwt from "jsonwebtoken";
 
 export class AuthTest {
     static async deleteAll() {
@@ -20,6 +23,16 @@ export class AuthTest {
                password: hashedPassword
            }
         });
+    }
+
+    static async getToken() {
+        await this.createUser();
+        const response = await supertest(web).post('/api/v1/auth/login').send({
+            username: 'test',
+            password: 'test12345678'
+        });
+
+        return response.body.accessToken;
     }
 
 }
