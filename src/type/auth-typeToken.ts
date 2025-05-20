@@ -6,8 +6,8 @@ export interface AuthTypeToken {
     authRes: AuthResponse;
     accessToken: string;
     accessTokenExpires: number;
-    refreshToken: string;
-    refreshTokenExpires: number;
+    refreshToken?: string;
+    refreshTokenExpires?: number;
 }
 
 export interface AuthUserRequest extends Request {

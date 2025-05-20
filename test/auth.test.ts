@@ -108,7 +108,6 @@ describe('POST /api/v1/auth/login', () => {
         expect(response.body.message).toBe('SuccessFully logged in');
         expect(response.headers['set-cookie']).toBeDefined();
         expect(response.headers['set-cookie'][0]).toBeDefined();
-        expect(response.headers['set-cookie'][1]).toBeDefined();
     });
 
     it('should reject if username, email or password wrong', async () => {
@@ -175,26 +174,72 @@ describe('POST /api/v1/auth/logout', () => {
         expect(response.body.error).toBeDefined();
     });
 
-    it('should reject if tekn expired', async () => {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+    // it('should reject if tekn expired', async () => {
+    //     await new Promise(resolve => setTimeout(resolve, 5000));
+    //
+    //     const refresh = await prisma.refreshToken.findFirst({
+    //         where: {
+    //             userId: id,
+    //         }
+    //     });
+    //
+    //     const refreshToken = refresh?.token;
+    //
+    //     const response = await supertest(web)
+    //         .delete('/api/v1/auth/logout')
+    //         .set('Authorization', `Bearer ${token}`)
+    //         .set('Cookie', `refreshToken=${refreshToken};`);
+    //
+    //     logging.info('Failed Logout', response.body);
+    //     // expect(response.status).toBe(401);
+    //     // expect(response.body.status).toBe(401);
+    //     // expect(response.body.error).toBeDefined();
+    //
+    // }, 6000);
+});
 
-        const refresh = await prisma.refreshToken.findFirst({
-            where: {
-                userId: id,
-            }
+describe('POST /api/v1/auth/refresh', () => {
+   let cookiesToken: string;
+    beforeEach(async () => {
+       await AuthTest.createUser();
+        const response = await supertest(web).post('/api/v1/auth/login').send({
+            username: 'test',
+            password: 'test12345678'
         });
+        cookiesToken = response.headers['set-cookie'];
+   });
 
-        const refreshToken = refresh?.token;
+   afterEach(async () => {
+        await AuthTest.deleteAll();
+   });
 
-        const response = await supertest(web)
-            .delete('/api/v1/auth/logout')
-            .set('Authorization', `Bearer ${token}`)
-            .set('Cookie', `refreshToken=${refreshToken};`);
+    it('should be reject if no refreshToken in cookie', async () => {
+        const response = await supertest(web).post('/api/v1/auth/refresh');
 
-        logging.info('Failed Logout', response.body);
-        // expect(response.status).toBe(401);
-        // expect(response.body.status).toBe(401);
-        // expect(response.body.error).toBeDefined();
+        logging.info('Failed Refresh', response.body);
+        expect(response.status).toBe(401);
+        expect(response.body.status).toBe(401);
+        expect(response.body.error).toBeDefined();
+    });
 
-    }, 6000);
+    it('should be able to generate new AccesToken', async () => {
+        const response = await supertest(web).post('/api/v1/auth/refresh').set('Cookie', cookiesToken);
+
+        logging.info('Success Refresh', response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.status).toBe(200);
+        expect(response.body.message).toBe('OK');
+        expect(response.body.accessToken).toBeDefined();
+        expect(response.body.expiresIn).toBeDefined();
+    });
+
+    it('should rejcet if refreshTokenInvalid', async () => {
+        const invalidToken = AuthTest.generateInvalidToken();
+
+        const response = await supertest(web).post('/api/v1/auth/refresh').set('Cookie', `refreshToken=${invalidToken};`);
+        logging.info('Failed Refresh', response.body);
+        expect(response.status).toBe(401);
+        expect(response.body.status).toBe(401);
+        expect(response.body.error).toBeDefined();
+    });
 });

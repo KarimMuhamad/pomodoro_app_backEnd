@@ -59,10 +59,10 @@
   "data": {
     "id": 1,
     "username": "test",
-    "email": "test@dev.com",
-    "token": "jwt token",
-    "expiresIn": 3600
-  }
+    "email": "test@dev.com"
+  },
+  "accesToken": "asdaodi11031031wiewe",
+  "expiresIn": 3600
 }
 ```
 
@@ -93,17 +93,20 @@
 
 ### Refresh Token
 **Endpoint : `POST /auth/refresh`**\
-**Request Header: `Cookie=refreshToken`**\
+**Request Header: `Cookie`**\
 **Response Body : `Succes(201)`**
 
 ```json
 {
   "status": 200,
-  "message": "Successfully Refresh Token",
+  "message": "Successfully Logged In",
   "data": {
-    "token": "testNew",
-    "expiresIn": 3600
-  }
+    "id": 1,
+    "username": "test",
+    "email": "test@dev.com"
+  },
+  "accesToken": "asdaodi11031031wiewe",
+  "expiresIn": 3600
 }
 ```
 **Response Body: Failed(401)**

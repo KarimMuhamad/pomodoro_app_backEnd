@@ -2,7 +2,8 @@ import {Request, Response, NextFunction, request, response} from "express";
 import {LoginAuthRequest, RegisterAuthRequest} from "../model/auth-model";
 import {AuthService} from "../service/auth-service";
 import logging from "../application/logging";
-import {AuthUserRequest} from "../type/auth-typeToken";
+import {AuthUserRequest, JWTDecoded} from "../type/auth-typeToken";
+import jwt from "jsonwebtoken";
 
 export class AuthController {
 
@@ -63,7 +64,6 @@ export class AuthController {
             res.status(200).json({
                 status: 200,
                 message: 'OK',
-                tes: 'test'
             });
 
             logging.info('User logged out', {
@@ -77,4 +77,23 @@ export class AuthController {
         }
     }
 
+    static async refresh(req: AuthUserRequest, res: Response, next: NextFunction) {
+        try {
+            const response = await AuthService.generateAccessToken(req.user!);
+            res.status(200).json({
+                status: 200,
+                message: 'OK',
+                data: response.authRes,
+                accessToken: response.accessToken,
+                expiresIn: response.accessTokenExpires,
+            });
+
+            logging.info('User refresh token', {
+                username: response.authRes.username,
+            });
+        } catch (e) {
+            next(e);
+            logging.warn(`User generate token failed : ${e.message}`, {request: req.body});
+        }
+    }
 }

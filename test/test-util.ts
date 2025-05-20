@@ -25,14 +25,9 @@ export class AuthTest {
         });
     }
 
-    static async getToken() {
-        await this.createUser();
-        const response = await supertest(web).post('/api/v1/auth/login').send({
-            username: 'test',
-            password: 'test12345678'
-        });
-
-        return response.body.accessToken;
+    static async generateInvalidToken() {
+        const invalidToken = jwt.sign({id: 1}, 'invalid', {expiresIn: '30d'});
+        return invalidToken;
     }
 
 }

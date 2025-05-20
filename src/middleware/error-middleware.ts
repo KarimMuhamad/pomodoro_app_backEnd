@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {ZodError} from "zod";
 import {ResponseError} from "../error/response-error";
+import {JsonWebTokenError} from "jsonwebtoken";
 
 export const errorMiddleware = async (err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof ZodError) {
@@ -12,6 +13,12 @@ export const errorMiddleware = async (err: Error, req: Request, res: Response, n
         res.status(err.status).json({
             status: err.status,
             error: err.message,
+        });
+    } else if (err instanceof JsonWebTokenError) {
+        res.status(401).json({
+            status: 401,
+            error: err.message,
+            testData: 'error Jwt'
         });
     } else {
         res.status(500).json({
