@@ -18,7 +18,6 @@ export const errorMiddleware = async (err: Error, req: Request, res: Response, n
         res.status(401).json({
             status: 401,
             error: err.message,
-            testData: 'error Jwt'
         });
     } else {
         res.status(500).json({

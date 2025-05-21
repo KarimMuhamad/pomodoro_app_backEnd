@@ -13,25 +13,21 @@ export class AuthService {
     static async register(req: RegisterAuthRequest) : Promise<AuthResponse> {
         const resgisterRequest = Validation.validate(AuthValidation.REGISTER, req);
 
-        const totalUserWithSameUsername = await prisma.user.count({
+        const isUsernameExist = await prisma.user.findUnique({
             where: {
                 username: resgisterRequest.username
             }
         });
 
-        if (totalUserWithSameUsername > 0) {
-            throw new ResponseError(400, 'Username already exists');
-        }
+        if (isUsernameExist) throw new ResponseError(409, 'Username already exists');
 
-        const totalUserWithSameEmail = await prisma.user.count({
+        const isEmailExist = await prisma.user.findUnique({
             where: {
                 email: resgisterRequest.email
             }
         });
 
-        if (totalUserWithSameEmail > 0) {
-            throw new ResponseError(400, 'Email already exists');
-        }
+        if (isEmailExist) throw new ResponseError(409, 'Email already exists');
 
         resgisterRequest.password = await argon2.hash(resgisterRequest.password);
 

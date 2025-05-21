@@ -18,7 +18,7 @@ export type LoginAuthRequest = {
     password: string;
 }
 
-export function toAuthResponse(User: User, token?: string, expires?: number): AuthResponse {
+export function toAuthResponse(User: User): AuthResponse {
     return {
         id: User.id,
         username: User.username,
