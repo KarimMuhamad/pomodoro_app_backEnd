@@ -34,14 +34,15 @@ model User {
 }
 
 model UserPreferences {
-  id                 Int     @id @default(autoincrement())
-  userId             Int     @map("user_id")
-  focusDuration      Int     @default(1500) @map("focus_duration") //25 min in sec
-  shortBreakDuration Int     @default(300) @map("short_break_duration") // 5 min ~
-  longBreakDuration  Int     @default(900) @map("long_break_duration") // 15 min ~
-  autoStartFocus     Boolean @default(false) @map("auto_start_focus")
-  autoStartBreak     Boolean @default(false) @map("auto_start_break")
-  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @unique @map("user_id")
+  focusDuration      Int      @default(1500) @map("focus_duration") //25 min in sec
+  shortBreakDuration Int      @default(300) @map("short_break_duration") // 5 min ~
+  longBreakDuration  Int      @default(900) @map("long_break_duration") // 15 min ~
+  autoStartFocus     Boolean  @default(false) @map("auto_start_focus")
+  autoStartBreak     Boolean  @default(false) @map("auto_start_break")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
 }
@@ -57,7 +58,7 @@ model PomodoroSession {
   type        SessionType
   isCompleted Boolean     @default(false)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  label       Label       @relation(fields: [labelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  label       Label       @relation(fields: [labelId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
 
   @@map("pomodoro_session")
 }

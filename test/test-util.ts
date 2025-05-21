@@ -10,14 +10,10 @@ export class AuthTest {
     }
 
     static async createUser() {
-        const hashedPassword = await argon2.hash('test12345678');
-
-        await prisma.user.create({
-           data: {
-               username: 'test',
-               email: 'test@dev.com',
-               password: hashedPassword
-           }
+        await supertest(web).post('/api/v1/auth/register').send({
+            username: 'test',
+            email: 'test@dev.com',
+            password: 'test12345678'
         });
     }
 
