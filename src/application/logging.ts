@@ -6,7 +6,7 @@ const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
   winston.format.printf(({ level, message, timestamp, ...metadata}) => {
-      return `${timestamp} [${level}]: ${message} {${Object.keys(metadata).length ? JSON.stringify(metadata) : '}'}`;
+      return `${timestamp} [${level}]: ${message} {${Object.keys(metadata).length ? JSON.stringify(metadata) : ''} }`;
   })
 );
 

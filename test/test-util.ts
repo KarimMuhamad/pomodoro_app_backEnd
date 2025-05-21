@@ -47,3 +47,20 @@ export class UserTestUtil {
         return user;
     }
 }
+
+export class LabelTestUtil {
+    static async getLabel() {
+        const tokenId = await AuthTest.getToken();
+
+        const response = await supertest(web).post('/api/v1/labels').set('Authorization', `Bearer ${tokenId}`).send({
+            name: 'test',
+            color: '#000000'
+        });
+
+        return response.body.data;
+    }
+
+    static async deleteLabel() {
+        await prisma.label.deleteMany({});
+    }
+}
