@@ -3,6 +3,7 @@ import supertest from "supertest";
 import {web} from "../src/application/web";
 import logging from "../src/application/logging";
 import argon2 from "argon2";
+import prisma from "../src/application/database";
 
 describe('GET /api/v1/users/me', () => {
     let token: string;
@@ -146,4 +147,22 @@ describe('DELETE /api/v1/users/me', () => {
         expect(response.body.error).toBeDefined();
     });
 
+});
+
+describe('GET /api/v1/users/setting', () => {
+    let token: string;
+    beforeEach(async () => {
+        token = await AuthTest.getToken();
+    });
+
+    afterEach(async () => {
+        await AuthTest.deleteAll();
+    });
+
+    it('should be able to get user setting', async () => {
+        const response = await supertest(web).get('/api/v1/users/setting').set('Authorization', `Bearer ${token}`);
+
+        logging.info('Response', response.body);
+        expect(response.status).toBe(200);
+    })
 });

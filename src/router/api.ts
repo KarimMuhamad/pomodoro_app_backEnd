@@ -13,6 +13,7 @@ apiRouter.delete('/auth/logout', AuthController.logout);
 apiRouter.get('/users/me', UserController.getUsers);
 apiRouter.patch('/users/me', UserController.updateUsers);
 apiRouter.delete('/users/me', UserController.deleteUsers);
+apiRouter.get('/users/setting', UserController.getUserSetting);
 
 // Preferences Endpoint
 apiRouter.get('/users/preferences', PreferencesController.getPreferences);

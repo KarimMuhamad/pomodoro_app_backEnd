@@ -1,5 +1,10 @@
-import {User} from "@prisma/client";
-import {toUserResponse, UpdateUserRequest, UserResponse} from "../model/users-model";
+import {User, UserPreferences} from "@prisma/client";
+import {
+    toUserResponse,
+    toUserSettingsResponse,
+    UpdateUserRequest,
+    UserResponse, UserSettingsResponse,
+} from "../model/users-model";
 import prisma from "../application/database";
 import {Validation} from "../validation/validation";
 import {UserValidation} from "../validation/user-validation";
@@ -64,6 +69,22 @@ export class UserService {
         });
 
         return toUserResponse(deleteUser);
+    }
+
+    static async getUserSetting(user: User) : Promise<UserSettingsResponse> {
+        const settingAggregation = await prisma.user.findUnique({
+            where: {
+                id: user.id
+            },
+            include: {UserPreferences: true}
+        });
+
+        // Get the first element from the array, or throw an error if none exists
+        if (!settingAggregation?.UserPreferences || settingAggregation.UserPreferences.length === 0) {
+            throw new ResponseError(404, 'User preferences not found');
+        }
+
+        return toUserSettingsResponse(settingAggregation, settingAggregation.UserPreferences[0]);
     }
 
 }

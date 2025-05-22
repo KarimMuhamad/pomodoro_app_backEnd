@@ -45,4 +45,17 @@ export class UserController {
         }
     }
 
+    static async getUserSetting(req: AuthUserRequest, res: Response, next: NextFunction) {
+        try {
+            const response = await UserService.getUserSetting(req.user!);
+            res.status(200).json({
+                status: 200,
+                message: 'SuccessFully get user setting',
+                data: response,
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
 }
