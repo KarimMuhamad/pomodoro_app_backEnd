@@ -22,3 +22,5 @@ apiRouter.patch('/users/preferences', PreferencesController.updatePreferences);
 apiRouter.get('/labels', LabelController.getLabels);
 apiRouter.get('/labels/:labelId', LabelController.getLabelById);
 apiRouter.post('/labels', LabelController.createLabel);
+apiRouter.patch('/labels/:labelId', LabelController.updateLabel);
+apiRouter.delete('/labels/:labelId', LabelController.deleteLabel);

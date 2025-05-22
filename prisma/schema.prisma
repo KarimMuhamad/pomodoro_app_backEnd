@@ -68,6 +68,7 @@ model Label {
   userId          Int               @map("user_id")
   name            String            @db.VarChar(20)
   color           String            @db.VarChar(10)
+  isDefault       Boolean           @default(false) @map("id_default")
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   PomodoroSession PomodoroSession[]
 

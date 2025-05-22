@@ -11,6 +11,11 @@ export type CreateLabelRequest = {
     color: string;
 }
 
+export type UpdateLabelRequest = {
+    name?: string;
+    color?: string;
+}
+
 export function toLabelResponse(label: Label): LabelResponse {
     return {
         id: label.id,

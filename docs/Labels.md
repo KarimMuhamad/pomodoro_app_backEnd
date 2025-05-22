@@ -108,7 +108,58 @@
 **---**
 
 ### Update Label
+**Endpoint : `PATCH /labels`**\
+**Request Header: `authorization Bearer <TOKEN>`**
+
+**Request Body :**
+
+```json
+{
+  "name": "test",
+  "color": "#000000"
+}
+```
+**Response Body : `success (201)`**
+
+```json
+{
+  "status": 201,
+  "message": "succes create labels",
+  "data": {
+    "id": 1,
+    "name": "test",
+    "color": "#000000"
+  }
+}
+```
+
+**Response Body: Failed(401)**
+
+```json
+{
+  "status": 401,
+  "errors" : "Unauthorized"
+}
+```
 
 **---**
 
 ### Delete Label
+### Update Label
+**Endpoint : `DELETE /labels`**\
+**Request Header: `authorization Bearer <TOKEN>`**
+
+**Response Body : `success (201)`**
+
+
+```json
+{
+  "status": 201,
+  "message": "succes create labels",
+  "data": {
+    "id": 1,
+    "name": "test",
+    "color": "#000000"
+  }
+}
+```

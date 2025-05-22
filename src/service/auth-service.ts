@@ -43,7 +43,8 @@ export class AuthService {
                     Label: {
                         create: {
                             name: "UnLabelled",
-                            color: "#808080"
+                            color: "#808080",
+                            isDefault: true
                         }
                     }
                 }
