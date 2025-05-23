@@ -53,7 +53,7 @@ model PomodoroSession {
   labelId     Int         @map("label_id")
   duration    Int
   startTime   DateTime    @default(now()) @map("start_time")
-  endTime     DateTime?   @map("end_time")
+  endTime     DateTime?   @updatedAt @map("end_time")
   hour        Int
   type        SessionType
   isCompleted Boolean     @default(false)

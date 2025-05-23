@@ -4,6 +4,7 @@ import {AuthController} from "../controller/auth-controller";
 import {UserController} from "../controller/user-controller";
 import {PreferencesController} from "../controller/preferences-controller";
 import {LabelController} from "../controller/label-controller";
+import {PomodoroSessionController} from "../controller/pomodoro-session-controller";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -25,3 +26,7 @@ apiRouter.get('/labels/:labelId', LabelController.getLabelById);
 apiRouter.post('/labels', LabelController.createLabel);
 apiRouter.patch('/labels/:labelId', LabelController.updateLabel);
 apiRouter.delete('/labels/:labelId', LabelController.deleteLabel);
+
+// Pomodoro Session Endpoint
+apiRouter.post('/session', PomodoroSessionController.createSession);
+apiRouter.patch('/session/:sessionId', PomodoroSessionController.updateSession);
