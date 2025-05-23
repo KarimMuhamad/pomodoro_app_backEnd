@@ -42,7 +42,7 @@
 **Request Body:**
 ```json
 {
-  "endTime": "2023-06-01T14:25:00.000Z",
+  "duration": "5000",
   "isCompleted": true
 }
 ```

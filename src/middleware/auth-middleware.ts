@@ -1,6 +1,6 @@
 import {Response, NextFunction} from "express";
 import {AuthUserRequest, JWTDecoded} from "../type/auth-typeToken";
-import jwt, {JwtPayload} from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import prisma from "../application/database";
 import { ResponseError } from "../error/response-error";
 

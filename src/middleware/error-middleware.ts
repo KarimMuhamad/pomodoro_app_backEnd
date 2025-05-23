@@ -4,6 +4,10 @@ import {ResponseError} from "../error/response-error";
 import {JsonWebTokenError} from "jsonwebtoken";
 
 export const errorMiddleware = async (err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (res.headersSent) {
+        return next(err);
+    }
+
     if (err instanceof ZodError) {
         res.status(400).json({
             status: 400,

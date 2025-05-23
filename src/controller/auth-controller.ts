@@ -22,7 +22,7 @@ export class AuthController {
             });
         } catch (e) {
             next(e);
-            logging.warn(`User registration failed : ${e.message}`, {request: req.body});
+            logging.warn(`User registration failed : ${e}`, {request: req.body});
         }
     }
 
@@ -54,13 +54,14 @@ export class AuthController {
 
         } catch (e) {
             next(e);
-            logging.warn(`User login failed : ${e.message}`, {request: req.body});
+            logging.warn(`User login failed : ${e}`, {request: req.body});
         }
     }
 
     static async logout(req: AuthUserRequest, res: Response, next: NextFunction) {
         try {
             const response = await AuthService.logout(req.user!);
+            res.clearCookie('refreshToken');
             res.status(200).json({
                 status: 200,
                 message: 'OK',
@@ -69,11 +70,9 @@ export class AuthController {
             logging.info('User logged out', {
                 username: req.user!.username,
             });
-
-            res.clearCookie('refreshToken');
         } catch (e) {
             next(e);
-            logging.warn(`User logout failed : ${e.message}`, {request: req.body});
+            logging.warn(`User logout failed : ${e}`, {request: req.body});
         }
     }
 
@@ -93,7 +92,7 @@ export class AuthController {
             });
         } catch (e) {
             next(e);
-            logging.warn(`User generate token failed : ${e.message}`, {request: req.body});
+            logging.warn(`User generate token failed : ${e}`, {request: req.body});
         }
     }
 }

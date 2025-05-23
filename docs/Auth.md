@@ -121,7 +121,7 @@
 **---**
 
 ### Logout
-**Endpoint : `POST /auth/logout`**\
+**Endpoint : `DELETE /auth/logout`**\
 **Request Header: `Authorization= Bearer <TOKEN>`**\
 **Response Body : `Succes(200)`**
 

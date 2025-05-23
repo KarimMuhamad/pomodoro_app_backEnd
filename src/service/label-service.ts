@@ -77,6 +77,21 @@ export class LabelService {
         return toLabelResponse(result);
     }
 
+    static async getDefaultLabel(user: User) {
+        const label = await prisma.label.findFirst({
+            where: {
+                userId: user.id,
+                isDefault: true
+            }
+        });
+
+        if (!label) {
+            throw new ResponseError(404, 'Default label not found');
+        }
+
+        return label;
+    }
+
     static async deleteLabel(user: User, id: number): Promise<LabelResponse> {
         const labelToDelete = await prisma.label.findUnique({
             where: {
@@ -94,16 +109,7 @@ export class LabelService {
             throw new ResponseError(403, 'Forbidden');
         }
 
-        const defaultLabel = await prisma.label.findFirst({
-            where: {
-                userId: user.id,
-                isDefault: true
-            }
-        });
-
-        if (!defaultLabel) {
-            throw new ResponseError(404, 'Default label not found');
-        }
+        const defaultLabel = await this.getDefaultLabel(user);
 
         let result;
 

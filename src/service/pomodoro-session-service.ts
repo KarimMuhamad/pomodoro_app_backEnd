@@ -9,9 +9,13 @@ import { LabelService } from "./label-service";
 export class PomodoroSessionService {
     static async createSession(user: User, req: CreatePomodoroSessionRequest): Promise<PomodoroSessionResponse> {
         const validateCreate = Validation.validate(PomodoroSessionValidation.CREATE, req);
+
+        if (!validateCreate.labelId) {
+            validateCreate.labelId = await LabelService.getDefaultLabel(user).then(label => label.id);
+        }
         
         // Verify that the label exists and belongs to the user
-        await LabelService.findLabelById(user, validateCreate.labelId);
+        await LabelService.findLabelById(user, validateCreate.labelId!);
         
         const record = {
             ...validateCreate,

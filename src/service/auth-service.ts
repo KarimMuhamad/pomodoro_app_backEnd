@@ -7,6 +7,7 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import {AuthTypeToken, JWTDecoded} from "../type/auth-typeToken";
 import {User} from "@prisma/client";
+import logging from "../application/logging";
 
 export class AuthService {
 
@@ -77,12 +78,12 @@ export class AuthService {
             throw new ResponseError(401, "Password is wrong");
         }
 
-        const accesTokenExpires = Date.now() + 1000 * 60 * 25;
+        const accessTokenExpires = Date.now() + 1000 * 60 * 20;
         const refreshTokenExpires = Date.now() + 1000 * 60 * 60 * 24 * 30;
 
         const payload = {id: user.id};
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: '25m'});
+        const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: '20m'});
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH!, {expiresIn: "30d"});
 
         await prisma.refreshToken.create({
@@ -97,7 +98,7 @@ export class AuthService {
         return {
             authRes: toAuthResponse(user),
             accessToken: token,
-            accessTokenExpires: accesTokenExpires,
+            accessTokenExpires: accessTokenExpires,
             refreshToken: refreshToken,
             refreshTokenExpires: refreshTokenExpires
         };
@@ -120,15 +121,15 @@ export class AuthService {
     }
 
     static async generateAccessToken(user:User) : Promise<AuthTypeToken> {
-        const accesTokenExpires = Date.now() + 1000 * 60 * 25;
+        const accessTokenExpires = Date.now() + 1000 * 60 * 20;
 
         const payload = {id: user!.id};
-        const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: '25m'});
+        const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: '20m'});
 
         return {
             authRes: toAuthResponse(user),
             accessToken: token,
-            accessTokenExpires: accesTokenExpires,
+            accessTokenExpires: accessTokenExpires,
         };
     }
 }
