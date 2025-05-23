@@ -20,6 +20,7 @@ export type CreatePomodoroSessionRequest = {
 }
 
 export type UpdatePomodoroSessionRequest = {
+    sessionId: number;
     duration: number;
     isCompleted?: boolean;
 }

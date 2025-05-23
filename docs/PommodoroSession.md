@@ -42,6 +42,7 @@
 **Request Body:**
 ```json
 {
+  "sessionId": 1,
   "duration": "5000",
   "isCompleted": true
 }

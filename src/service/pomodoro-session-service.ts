@@ -14,7 +14,6 @@ export class PomodoroSessionService {
             validateCreate.labelId = await LabelService.getDefaultLabel(user).then(label => label.id);
         }
         
-        // Verify that the label exists and belongs to the user
         await LabelService.findLabelById(user, validateCreate.labelId!);
         
         const record = {
@@ -45,8 +44,8 @@ export class PomodoroSessionService {
         return session;
     }
     
-    static async updateSession(user: User, req: UpdatePomodoroSessionRequest, id: number): Promise<PomodoroSessionResponse> {
-        const session = await this.findSessionById(user, id);
+    static async updateSession(user: User, req: UpdatePomodoroSessionRequest): Promise<PomodoroSessionResponse> {
+        const session = await this.findSessionById(user, req.sessionId);
         
         const validateUpdate = Validation.validate(PomodoroSessionValidation.UPDATE, req);
         

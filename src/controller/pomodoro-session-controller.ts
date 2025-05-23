@@ -20,9 +20,8 @@ export class PomodoroSessionController {
 
     static async updateSession(req: AuthUserRequest, res: Response, next: NextFunction) {
         try {
-            const id = Number(req.params.sessionId);
             const request: UpdatePomodoroSessionRequest = req.body as UpdatePomodoroSessionRequest;
-            const response = await PomodoroSessionService.updateSession(req.user!, request, id);
+            const response = await PomodoroSessionService.updateSession(req.user!, request);
             res.status(200).json({
                 status: 200,
                 message: 'Successfully updated session',
