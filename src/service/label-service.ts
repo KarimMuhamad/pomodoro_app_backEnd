@@ -78,18 +78,53 @@ export class LabelService {
     }
 
     static async deleteLabel(user: User, id: number): Promise<LabelResponse> {
-        const label = await this.findLabelById(user, id);
+        const labelToDelete = await prisma.label.findUnique({
+            where: {
+                id: id,
+                userId: user.id
+            },
+            include: {PomodoroSession: true}
+        });
 
-        if (label.isDefault) {
+        if (!labelToDelete || labelToDelete.userId !== user.id) {
+            throw new ResponseError(404, 'No label found or Unauthorized');
+        }
+
+        if (labelToDelete.isDefault) {
             throw new ResponseError(403, 'Forbidden');
         }
 
-        const result = await prisma.label.delete({
+        const defaultLabel = await prisma.label.findFirst({
             where: {
-                id: label.id,
+                userId: user.id,
+                isDefault: true
             }
         });
 
-        return toLabelResponse(result);
+        if (!defaultLabel) {
+            throw new ResponseError(404, 'Default label not found');
+        }
+
+        let result;
+
+        await prisma.$transaction(async (tx) => {
+            if (labelToDelete.PomodoroSession.length > 0) {
+                await tx.pomodoroSession.updateMany({
+                    where: {labelId: id},
+                    data: {labelId: defaultLabel.id}
+                });
+            }
+
+            result = await tx.label.delete({
+                where: {
+                    id: id,
+                    userId: user.id
+                }
+            });
+        });
+
+
+
+        return toLabelResponse(result!);
     }
 }

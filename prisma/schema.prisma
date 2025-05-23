@@ -52,13 +52,13 @@ model PomodoroSession {
   userId      Int         @map("user_id")
   labelId     Int         @map("label_id")
   duration    Int
-  startTime   DateTime    @map("start_time")
-  endTime     DateTime    @map("end_time")
+  startTime   DateTime    @default(now()) @map("start_time")
+  endTime     DateTime?   @map("end_time")
   hour        Int
   type        SessionType
   isCompleted Boolean     @default(false)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  label       Label       @relation(fields: [labelId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
+  label       Label       @relation(fields: [labelId], references: [id], onUpdate: Cascade)
 
   @@map("pomodoro_session")
 }
