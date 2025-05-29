@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import {AuthTypeToken, JWTDecoded} from "../type/auth-typeToken";
 import {User} from "@prisma/client";
 import logging from "../application/logging";
+import { info } from "winston";
 
 export class AuthService {
 

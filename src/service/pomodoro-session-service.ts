@@ -30,7 +30,7 @@ export class PomodoroSessionService {
     }
     
     static async findSessionById(user: User, id: number) {
-        const session = await prisma.pomodoroSession.findUnique({
+        const session = await prisma.pomodoroSession.findFirst({
             where: {
                 id: id,
                 userId: user.id
@@ -43,9 +43,15 @@ export class PomodoroSessionService {
         
         return session;
     }
+
+    static async getSessionById(user: User, id: number) {
+        const res = await this.findSessionById(user ,id);
+
+        return toPomodoroSessionResponse(res);
+    }
     
-    static async updateSession(user: User, req: UpdatePomodoroSessionRequest): Promise<PomodoroSessionResponse> {
-        const session = await this.findSessionById(user, req.sessionId);
+    static async updateSession(user: User, req: UpdatePomodoroSessionRequest, id: number): Promise<PomodoroSessionResponse> {
+        const session = await this.findSessionById(user, id);
         
         const validateUpdate = Validation.validate(PomodoroSessionValidation.UPDATE, req);
         

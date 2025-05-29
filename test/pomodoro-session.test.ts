@@ -38,6 +38,21 @@ describe('POST /api/v1/session', () => {
         expect(response.body.data.type).toBe('FOCUS');
         expect(response.body.data.isCompleted).toBe(false);
     });
+
+    it('should be able to create session with default label', async () => {
+        const response = await supertest(web).post('/api/v1/session').set('Authorization', `Bearer ${token}`).send({
+            duration: 0,
+            hour: new Date().getHours(),
+            type: 'FOCUS'
+        });
+
+        logging.info('Response', response.body);
+        expect(response.status).toBe(201);
+        expect(response.body.data.duration).toBe(0);
+        expect(response.body.data.hour).toBe(new Date().getHours());
+        expect(response.body.data.type).toBe('FOCUS');
+        expect(response.body.data.isCompleted).toBe(false);
+    });
     
     it('should reject create session with validation error', async () => {
         const response = await supertest(web).post('/api/v1/session').set('Authorization', `Bearer ${token}`).send({
@@ -169,6 +184,60 @@ describe('PATCH /api/v1/session/:sessionId', () => {
         logging.info('Response', response.body);
         expect(response.status).toBe(401);
         expect(response.body.status).toBe(401);
+        expect(response.body.error).toBeDefined();
+    });
+});
+
+describe('GET /api/v1/session/:sessionId', () => {
+    let token: string;
+    let labelId: number;
+    beforeEach(async () => {
+        token = await AuthTest.getToken();
+        const label = await supertest(web).post('/api/v1/labels').set('Authorization', `Bearer ${token}`).send({
+            name: 'Belajar Java',
+            color: '#09f129'
+        });
+        labelId = label.body.data.id;
+    });
+
+    afterEach(async () => {
+        await prisma.pomodoroSession.deleteMany({});
+        await AuthTest.deleteAll();
+    });
+
+    it('should be able to get session', async () => {
+        const session = await supertest(web).post('/api/v1/session').set('Authorization', `Bearer ${token}`).send({
+            duration: 0,
+            hour: new Date().getHours(),
+            type: 'FOCUS'
+        });
+
+        logging.info('Session', session.body);
+
+        const sessionId = session.body.data.id;
+
+        const response = await supertest(web).get(`/api/v1/session/${sessionId}`).set('Authorization', `Bearer ${token}`);
+
+        logging.info('Response', response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.id).toBe(sessionId);
+    });
+
+    it('should reject to get session if token invalid', async () => {
+        const session = await supertest(web).post('/api/v1/session').set('Authorization', `Bearer ${token}`).send({
+            duration: 0,
+            hour: new Date().getHours(),
+            type: 'FOCUS'
+        });
+
+        logging.info('Session', session.body);
+
+        const sessionId = session.body.data.id;
+
+        const response = await supertest(web).get(`/api/v1/session/${sessionId}`).set('Authorization', `Bearer ${token + 'abd'}`);
+
+        logging.info('Response', response.body);
+        expect(response.status).toBe(401);
         expect(response.body.error).toBeDefined();
     });
 });

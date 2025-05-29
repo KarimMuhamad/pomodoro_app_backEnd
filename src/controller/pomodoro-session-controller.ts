@@ -18,10 +18,25 @@ export class PomodoroSessionController {
         }
     }
 
+    static async getSession(req: AuthUserRequest, res: Response, next: NextFunction) {
+        try {
+            const id = Number(req.params.sessionId);
+            const response = await PomodoroSessionService.getSessionById(req.user!, id);
+            res.status(200).json({
+                status: 201,
+                message: 'Successfully getting session',
+                data: response,
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
     static async updateSession(req: AuthUserRequest, res: Response, next: NextFunction) {
         try {
+            const id = Number(req.params.sessionId);
             const request: UpdatePomodoroSessionRequest = req.body as UpdatePomodoroSessionRequest;
-            const response = await PomodoroSessionService.updateSession(req.user!, request);
+            const response = await PomodoroSessionService.updateSession(req.user!, request, id);
             res.status(200).json({
                 status: 200,
                 message: 'Successfully updated session',

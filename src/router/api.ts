@@ -29,4 +29,5 @@ apiRouter.delete('/labels/:labelId', LabelController.deleteLabel);
 
 // Pomodoro Session Endpoint
 apiRouter.post('/session', PomodoroSessionController.createSession);
-apiRouter.patch('/session', PomodoroSessionController.updateSession);
+apiRouter.patch('/session/:sessionId', PomodoroSessionController.updateSession);
+apiRouter.get('/session/:sessionId', PomodoroSessionController.getSession);
